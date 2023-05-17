@@ -62,6 +62,59 @@ class Box:
                     print("矩阵随机生成完成")
         self.print_box()
 
+    def move_a(self):
+        box = self.box
+        len_of_box = self.len_of_box
+
+        for i in range(len_of_box):
+            for j in range(len_of_box):
+                if box[i][j] != 0 and j - 1 >= 0:
+                    a = j
+                    while a - 1 >= 0:
+                        now_key = box[i][a]
+                        if box[i][a - 1] == now_key:
+                            box[i][a - 1] = now_key * 2
+                        elif box[i][a - 1] == 0:
+                            box[i][a - 1] = now_key
+                        box[i][a] = 0
+                        a -= 1
+        self.box = box
+        self.print_box()
+
+    def move_d(self):
+        box = self.box
+        len_of_box = self.len_of_box
+        for i in range(len_of_box):
+            for j in range(len_of_box):
+                if box[i][j] != 0 and j + 1 <= len_of_box - 1:
+                    a = j
+                    # 开始移动
+                    while a + 1 <= len_of_box - 1:
+                        now_key = box[i][a]
+                        if box[i][a + 1] == now_key:
+                            box[i][a + 1] = now_key * 2
+                        elif box[i][a + 1] == 0:
+                            box[i][a + 1] = now_key
+                        box[i][a] = 0
+                        a += 1
+                    # 移动完成
+        self.box = box
+        self.print_box()
+
+    def move_w(self):
+        box = self.box
+        len_of_box = self.len_of_box
+
+        self.box = box
+        self.print_box()
+
+    def move_s(self):
+        box = self.box
+        len_of_box = self.len_of_box
+
+        self.box = box
+        self.print_box()
+
 
 if __name__ == '__main__':
     b1 = Box()
@@ -76,12 +129,12 @@ if __name__ == '__main__':
         elif com == "e":
             break
         elif com == "a":
-            pass
+            b1.move_a()
         elif com == "s":
-            pass
+            b1.move_s()
         elif com == "d":
-            pass
+            b1.move_d()
         elif com == "w":
-            pass
+            b1.move_w()
         else:
             print("请输入指定指令！")
