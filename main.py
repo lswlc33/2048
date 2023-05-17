@@ -65,7 +65,6 @@ class Box:
     def move_a(self):
         box = self.box
         len_of_box = self.len_of_box
-
         for i in range(len_of_box):
             for j in range(len_of_box):
                 if box[i][j] != 0 and j - 1 >= 0:
@@ -104,14 +103,40 @@ class Box:
     def move_w(self):
         box = self.box
         len_of_box = self.len_of_box
-
+        for i in range(len_of_box):
+            for j in range(len_of_box):
+                if box[j][i] != 0 and j - 1 >= 0:
+                    a = j
+                    # 开始移动
+                    while a - 1 >= 0:
+                        now_key = box[a][i]
+                        if box[a - 1][i] == now_key:
+                            box[a - 1][i] = now_key * 2
+                        elif box[a - 1][i] == 0:
+                            box[a - 1][i] = now_key
+                        box[a][i] = 0
+                        a -= 1
+                    # 移动完成
         self.box = box
         self.print_box()
 
     def move_s(self):
         box = self.box
         len_of_box = self.len_of_box
-
+        for i in range(len_of_box):
+            for j in range(len_of_box):
+                if box[j][i] != 0 and j + 1 <= len_of_box - 1:
+                    a = j
+                    # 开始移动
+                    while a + 1 <= len_of_box - 1:
+                        now_key = box[a][i]
+                        if box[a + 1][i] == now_key:
+                            box[a + 1][i] = now_key * 2
+                        elif box[a + 1][i] == 0:
+                            box[a + 1][i] = now_key
+                        box[a][i] = 0
+                        a += 1
+                    # 移动完成
         self.box = box
         self.print_box()
 
@@ -130,11 +155,15 @@ if __name__ == '__main__':
             break
         elif com == "a":
             b1.move_a()
+            b1.random_generate()
         elif com == "s":
             b1.move_s()
+            b1.random_generate()
         elif com == "d":
             b1.move_d()
+            b1.random_generate()
         elif com == "w":
             b1.move_w()
+            b1.random_generate()
         else:
             print("请输入指定指令！")
