@@ -11,6 +11,7 @@ class Box:
         self.len_of_box = 4
         self.create_new_box(self.len_of_box)
         self.random_generate()
+        self.print_box()
         print("矩阵初始化完成")
 
     def create_new_box(self, len_of_box):
@@ -24,7 +25,6 @@ class Box:
         # 更新变量
         self.box_is_edited = False
         self.box = the_box
-        self.print_box()
         print("已创建{}x{}的正方形".format(len_of_box, len_of_box))
         return the_box
 
@@ -60,7 +60,7 @@ class Box:
                     self.edit_box(x, y, random.choice([2, 4]))
                     edited = 0
                     print("矩阵随机生成完成")
-        self.print_box()
+
 
     def move_a(self):
         box = self.box
@@ -75,10 +75,12 @@ class Box:
                             box[i][a - 1] = now_key * 2
                         elif box[i][a - 1] == 0:
                             box[i][a - 1] = now_key
+                        else:
+                            break
                         box[i][a] = 0
                         a -= 1
         self.box = box
-        self.print_box()
+
 
     def move_d(self):
         box = self.box
@@ -94,12 +96,12 @@ class Box:
                             box[i][a + 1] = now_key * 2
                         elif box[i][a + 1] == 0:
                             box[i][a + 1] = now_key
+                        else:
+                            break
                         box[i][a] = 0
                         a += 1
                     # 移动完成
         self.box = box
-        self.print_box()
-
     def move_w(self):
         box = self.box
         len_of_box = self.len_of_box
@@ -114,11 +116,12 @@ class Box:
                             box[a - 1][i] = now_key * 2
                         elif box[a - 1][i] == 0:
                             box[a - 1][i] = now_key
+                        else:
+                            break
                         box[a][i] = 0
                         a -= 1
                     # 移动完成
         self.box = box
-        self.print_box()
 
     def move_s(self):
         box = self.box
@@ -134,11 +137,12 @@ class Box:
                             box[a + 1][i] = now_key * 2
                         elif box[a + 1][i] == 0:
                             box[a + 1][i] = now_key
+                        else:
+                            break
                         box[a][i] = 0
                         a += 1
                     # 移动完成
         self.box = box
-        self.print_box()
 
 
 if __name__ == '__main__':
@@ -154,16 +158,24 @@ if __name__ == '__main__':
         elif com == "e":
             break
         elif com == "a":
-            b1.move_a()
+            for i in range(b1.len_of_box):
+                b1.move_a()
             b1.random_generate()
+            b1.print_box()
         elif com == "s":
-            b1.move_s()
+            for i in range(b1.len_of_box):
+                b1.move_s()
             b1.random_generate()
+            b1.print_box()
         elif com == "d":
-            b1.move_d()
+            for i in range(b1.len_of_box):
+                b1.move_d()
             b1.random_generate()
+            b1.print_box()
         elif com == "w":
-            b1.move_w()
+            for i in range(b1.len_of_box):
+                b1.move_w()
             b1.random_generate()
+            b1.print_box()
         else:
             print("请输入指定指令！")
