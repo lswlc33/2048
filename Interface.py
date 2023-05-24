@@ -3,7 +3,7 @@ import sys
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QFrame, QStackedWidget, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QFrame, QStackedWidget, QHBoxLayout, QLabel, QGridLayout
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import (NavigationInterface, NavigationItemPosition, MessageBox)
 from qframelesswindow import FramelessWindow, StandardTitleBar
@@ -13,13 +13,33 @@ class Widget(QFrame):
 
     def __init__(self, text: str, parent=None):
         super().__init__(parent=parent)
-        self.hBoxLayout = QHBoxLayout(self)
         self.setObjectName(text.replace(' ', '-'))
 
+
+class Box_Widget(QFrame):
+    def __init__(self, num):
+        super().__init__()
+        self.label = QLabel(num, self)
+
+
+
+class Home_Widget(Widget):
+    def __init__(self, text: str, parent=None):
+        super().__init__(text)
+        self.grid = QGridLayout(self)
+        self.grid.setSpacing(0)
+        self.grid.setAlignment(Qt.AlignCenter)
+        boxt = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 2, 0, 0],
+            [2, 0, 0, 0]
+        ]
         # 页面添加文字
-        # self.label = QLabel(text, self)
-        # self.label.setAlignment(Qt.AlignCenter)
-        # self.hBoxLayout.addWidget(self.label, 1, Qt.AlignCenter)
+        for i in range(len(boxt)):
+            for j in range(len(boxt[0])):
+                box = Box_Widget(str(boxt[i][j]))
+                self.grid.addWidget(box, i, j)
 
 
 class Window(FramelessWindow):
@@ -33,7 +53,7 @@ class Window(FramelessWindow):
         self.stackWidget = QStackedWidget(self)
 
         # create sub interface
-        self.homeInterface = Widget('Home Interface', self)
+        self.homeInterface = Home_Widget('Home Interface', self)
         self.helpInterface = Widget('Help Interface', self)
         self.settingInterface = Widget('Setting Interface', self)
 
@@ -65,7 +85,7 @@ class Window(FramelessWindow):
 
         # 翻页事件
         self.stackWidget.currentChanged.connect(self.onCurrentInterfaceChanged)
-        self.stackWidget.setCurrentIndex(1)
+        self.stackWidget.setCurrentIndex(0)
 
     def initWindow(self):
         # 初始化窗口
@@ -127,3 +147,7 @@ def loadwindows():
     w = Window()
     w.show()
     app.exec_()
+
+
+if __name__ == '__main__':
+    loadwindows()
