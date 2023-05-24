@@ -2,7 +2,7 @@
 import sys
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import QApplication, QFrame, QStackedWidget, QHBoxLayout, QLabel, QGridLayout
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import (NavigationInterface, NavigationItemPosition, MessageBox)
@@ -19,8 +19,17 @@ class Widget(QFrame):
 class Box_Widget(QFrame):
     def __init__(self, num):
         super().__init__()
-        self.label = QLabel(num, self)
+        h_layout = QGridLayout(self)
+        self.setObjectName("h_layout1")
+        self.label = QLabel(str(num), self)
+        self.label.setAlignment(Qt.AlignCenter)  # 将文本居中显示
+        self.setFixedSize(40, 40)  # 设置控件大小
+        if num != "0":
+            # self.setStyleSheet("background-color: black;")
+            self.setStyleSheet("#h_layout1 {border: 2px solid gray}")
 
+        self.label.setFont(QFont("微软雅黑", 14))
+        h_layout.addWidget(self.label)
 
 
 class Home_Widget(Widget):
