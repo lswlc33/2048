@@ -2,11 +2,13 @@
 import sys
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtWidgets import QApplication, QFrame, QStackedWidget, QHBoxLayout, QLabel, QGridLayout
-from qfluentwidgets import FluentIcon as FIF
+from PyQt5.QtGui import QIcon, QFont, QKeySequence
+from PyQt5.QtWidgets import QApplication, QFrame, QStackedWidget, QHBoxLayout, QLabel, QGridLayout, QPushButton, \
+    QVBoxLayout, QShortcut
+from qfluentwidgets import FluentIcon as FIF, PushButton
 from qfluentwidgets import (NavigationInterface, NavigationItemPosition, MessageBox)
 from qframelesswindow import FramelessWindow, StandardTitleBar
+from box import *
 
 
 class Widget(QFrame):
@@ -32,22 +34,89 @@ class Box_Widget(QFrame):
         h_layout.addWidget(self.label)
 
 
+def delete_all_widgets(layout):
+    for i in reversed(range(layout.count())):
+        item = layout.itemAt(i)
+
+        if isinstance(item, (QGridLayout, QHBoxLayout, QVBoxLayout)):
+            # If the item is another layout, recursively delete its contents.
+            layout.delete_all_widgets(item)
+        else:
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+
+        layout.removeItem(item)
+
+
 class Home_Widget(Widget):
     def __init__(self, text: str, parent=None):
         super().__init__(text)
-        self.grid = QGridLayout(self)
+
+        self.game = Box()
+        self.vBoxLayout = QVBoxLayout(self)
+
+        self.grid = QGridLayout()
         self.grid.setSpacing(0)
-        self.grid.setAlignment(Qt.AlignCenter)
-        boxt = [
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 2, 0, 0],
-            [2, 0, 0, 0]
-        ]
+
+        self.pushButton1 = PushButton('开始/重新开始', self, FIF.UPDATE)
+        self.pushButton1.clicked.connect(self.init_boxw)
+        self.vBoxLayout.addLayout(self.grid, Qt.AlignCenter)
+        self.vBoxLayout.addWidget(self.pushButton1, 0, Qt.AlignBottom)
+
+        # 键盘监听ASDW
+        shortcut_a = QShortcut(QKeySequence("A"), self)
+        shortcut_a.activated.connect(self.move_a)
+        shortcut_a = QShortcut(QKeySequence("S"), self)
+        shortcut_a.activated.connect(self.move_s)
+        shortcut_a = QShortcut(QKeySequence("D"), self)
+        shortcut_a.activated.connect(self.move_d)
+        shortcut_a = QShortcut(QKeySequence("W"), self)
+        shortcut_a.activated.connect(self.move_w)
+
+    def move_a(self):
+        for i in range(self.game.len_of_box):
+            self.game.move_a()
+        self.game.random_generate()
+        self.game.print_box()
+        delete_all_widgets(self.grid)
+        self.add_box_widget(self.game.box)
+
+    def move_s(self):
+        for i in range(self.game.len_of_box):
+            self.game.move_s()
+        self.game.random_generate()
+        self.game.print_box()
+        delete_all_widgets(self.grid)
+        self.add_box_widget(self.game.box)
+
+    def move_d(self):
+        for i in range(self.game.len_of_box):
+            self.game.move_d()
+        self.game.random_generate()
+        self.game.print_box()
+        delete_all_widgets(self.grid)
+        self.add_box_widget(self.game.box)
+
+    def move_w(self):
+        for i in range(self.game.len_of_box):
+            self.game.move_w()
+        self.game.random_generate()
+        self.game.print_box()
+        delete_all_widgets(self.grid)
+        self.add_box_widget(self.game.box)
+
+    def init_boxw(self):
+        self.game = Box()
+        delete_all_widgets(self.grid)
+        self.add_box_widget(self.game.box)
+
+    def add_box_widget(self, boxt):
         # 页面添加文字
         for i in range(len(boxt)):
             for j in range(len(boxt[0])):
                 box = Box_Widget(str(boxt[i][j]))
+                box.setFixedSize(100, 100)
                 self.grid.addWidget(box, i, j)
 
 
