@@ -26,6 +26,7 @@ class Box_Widget(QFrame):
         self.label = QLabel(str(num), self)
         self.label.setAlignment(Qt.AlignCenter)  # 将文本居中显示
         self.setFixedSize(40, 40)  # 设置控件大小
+        # 高亮非0格子
         if num != "0":
             # self.setStyleSheet("background-color: black;")
             self.setStyleSheet("#h_layout1 {border: 2px solid gray}")
@@ -53,12 +54,11 @@ class Home_Widget(Widget):
     def __init__(self, text: str, parent=None):
         super().__init__(text)
 
+        # 布局
         self.game = Box()
         self.vBoxLayout = QVBoxLayout(self)
-
         self.grid = QGridLayout()
         self.grid.setSpacing(0)
-
         self.pushButton1 = PushButton('开始/重新开始', self, FIF.UPDATE)
         self.pushButton1.clicked.connect(self.init_boxw)
         self.vBoxLayout.addLayout(self.grid, Qt.AlignCenter)
@@ -74,6 +74,19 @@ class Home_Widget(Widget):
         shortcut_a = QShortcut(QKeySequence("W"), self)
         shortcut_a.activated.connect(self.move_w)
 
+        # 初始化宫格
+        self.init_boxw()
+
+    def check_if_full(self):
+        box = self.game.box
+        not_in = True
+        for i in box:
+            if 0 in i:
+                not_in = False
+        if not_in:
+            self.init_boxw()
+
+
     def move_a(self):
         for i in range(self.game.len_of_box):
             self.game.move_a()
@@ -81,6 +94,7 @@ class Home_Widget(Widget):
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
+        self.check_if_full()
 
     def move_s(self):
         for i in range(self.game.len_of_box):
@@ -89,6 +103,7 @@ class Home_Widget(Widget):
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
+        self.check_if_full()
 
     def move_d(self):
         for i in range(self.game.len_of_box):
@@ -97,6 +112,7 @@ class Home_Widget(Widget):
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
+        self.check_if_full()
 
     def move_w(self):
         for i in range(self.game.len_of_box):
@@ -105,14 +121,16 @@ class Home_Widget(Widget):
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
+        self.check_if_full()
 
     def init_boxw(self):
+        # 初始化宫格
         self.game = Box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
 
     def add_box_widget(self, boxt):
-        # 页面添加文字
+        # 宫格添加格子
         for i in range(len(boxt)):
             for j in range(len(boxt[0])):
                 box = Box_Widget(str(boxt[i][j]))
@@ -143,6 +161,7 @@ class Window(FramelessWindow):
 
         self.initWindow()
 
+
     def initLayout(self):
         # 初始化最外层布局
         self.hBoxLayout.setSpacing(0)
@@ -167,7 +186,8 @@ class Window(FramelessWindow):
 
     def initWindow(self):
         # 初始化窗口
-        self.resize(900, 700)  # 大小
+        self.adjustSize()
+        # self.resize(900, 700)  # 大小
         self.setWindowIcon(QIcon('resource/logo.png'))  # 图标
         self.setWindowTitle('A game：2048')  # 标题
         self.titleBar.setAttribute(Qt.WA_StyledBackground)
