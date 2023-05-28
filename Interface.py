@@ -9,7 +9,9 @@ from qfluentwidgets import FluentIcon as FIF, PushButton
 from qfluentwidgets import (NavigationInterface, NavigationItemPosition, MessageBox)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 from box import *
+from setting_interface import SettingInterface
 
+# python ./tools/designer.py
 
 class Widget(QFrame):
 
@@ -29,7 +31,9 @@ class Box_Widget(QFrame):
         # 高亮非0格子
         if num != "0":
             # self.setStyleSheet("background-color: black;")
-            self.setStyleSheet("#h_layout1 {border: 2px solid gray}")
+            self.setStyleSheet(
+                "#h_layout1 {border: 2px solid gray}"
+            )
 
         self.label.setFont(QFont("微软雅黑", 14))
         h_layout.addWidget(self.label)
@@ -50,9 +54,23 @@ def delete_all_widgets(layout):
         layout.removeItem(item)
 
 
+class Setting_Widget(Widget):
+    def __init__(self, text: str, parent=None):
+        super().__init__(text)
+        # self.hBoxLayout = QHBoxLayout(self)
+        # self.settingInterface = SettingInterface(self)
+        # self.hBoxLayout.setContentsMargins(0, 0, 0, 0)
+        # self.hBoxLayout.addWidget(self.settingInterface)
+
+
+
+
+
 class Home_Widget(Widget):
     def __init__(self, text: str, parent=None):
         super().__init__(text)
+
+        self.is_stop = False
 
         # 布局
         self.game = Box()
@@ -84,44 +102,67 @@ class Home_Widget(Widget):
             if 0 in i:
                 not_in = False
         if not_in:
-            self.init_boxw()
+            self.is_stop = True
+            self.game = Box()
+            delete_all_widgets(self.grid)
+            Window.showMessageBox(
+                self,
+                "失败",
+                "你失败了！",
+            )
 
+            self.is_stop = False
+            self.add_box_widget(self.game.box)
+            return True
 
     def move_a(self):
+        if self.is_stop:
+            return False
+        if self.check_if_full():
+            return False
+
         for i in range(self.game.len_of_box):
             self.game.move_a()
         self.game.random_generate()
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
-        self.check_if_full()
 
     def move_s(self):
+        if self.is_stop:
+            return False
+        if self.check_if_full():
+            return False
         for i in range(self.game.len_of_box):
             self.game.move_s()
         self.game.random_generate()
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
-        self.check_if_full()
 
     def move_d(self):
+        if self.is_stop:
+            return False
+        if self.check_if_full():
+            return False
         for i in range(self.game.len_of_box):
             self.game.move_d()
         self.game.random_generate()
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
-        self.check_if_full()
 
     def move_w(self):
+        if self.is_stop:
+            return False
+        if self.check_if_full():
+            return False
         for i in range(self.game.len_of_box):
             self.game.move_w()
         self.game.random_generate()
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
-        self.check_if_full()
 
     def init_boxw(self):
         # 初始化宫格
@@ -151,7 +192,7 @@ class Window(FramelessWindow):
         # create sub interface
         self.homeInterface = Home_Widget('Home Interface', self)
         self.helpInterface = Widget('Help Interface', self)
-        self.settingInterface = Widget('Setting Interface', self)
+        self.settingInterface = Setting_Widget('Setting Interface', self)
 
         # initialize layout
         self.initLayout()
@@ -160,7 +201,6 @@ class Window(FramelessWindow):
         self.initNavigation()
 
         self.initWindow()
-
 
     def initLayout(self):
         # 初始化最外层布局
@@ -186,7 +226,7 @@ class Window(FramelessWindow):
 
     def initWindow(self):
         # 初始化窗口
-        self.adjustSize()
+        self.adjustSize()  # 自适应大小
         # self.resize(900, 700)  # 大小
         self.setWindowIcon(QIcon('resource/logo.png'))  # 图标
         self.setWindowTitle('A game：2048')  # 标题
@@ -226,10 +266,11 @@ class Window(FramelessWindow):
         widget = self.stackWidget.widget(index)
         self.navigationInterface.setCurrentItem(widget.objectName())
 
-    def showMessageBox(self, text):
+    def showMessageBox(self, text1, text2):
         # 弹出消息
         w = MessageBox(
-            text,
+            text1,
+            text2,
             self
         )
         w.exec()
