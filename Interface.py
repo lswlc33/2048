@@ -27,15 +27,28 @@ class Box_Widget(QFrame):
         self.setObjectName("h_layout1")
         self.label = QLabel(str(num), self)
         self.label.setAlignment(Qt.AlignCenter)  # 将文本居中显示
+
         self.setFixedSize(40, 40)  # 设置控件大小
         # 高亮非0格子
-        if num != "0":
-            # self.setStyleSheet("background-color: black;")
+
+        if num == "0":
             self.setStyleSheet(
-                "#h_layout1 {border: 2px solid gray}"
+                "#h_layout1{border: 2px solid gray;border-color: rgb(180,180,180);border-radius: "
+                "10px;background-color: rgb(255, 255, 255);}#h_layout1:hover{background-color: rgb(229,229,229);}"
             )
 
-        self.label.setFont(QFont("微软雅黑", 14))
+        elif int(num) >= 64:
+            self.setStyleSheet(
+                "#h_layout1{border: 5px solid gray;border-color: rgb(255,32,32);border-radius: "
+                "10px;background-color: rgb(255, 255, 255);}#h_layout1:hover{background-color: rgb(235,235,235);}"
+            )
+        else:
+            self.setStyleSheet(
+                "#h_layout1{border: 5px solid gray;border-color: rgb(58,174,239);border-radius: "
+                "10px;background-color: rgb(255, 255, 255);}#h_layout1:hover{background-color: rgb(235,235,235);}"
+            )
+
+        self.label.setFont(QFont("Comic Sans MS", 30))
         h_layout.addWidget(self.label)
 
 
@@ -76,7 +89,7 @@ class Home_Widget(Widget):
         self.game = Box()
         self.vBoxLayout = QVBoxLayout(self)
         self.grid = QGridLayout()
-        self.grid.setSpacing(0)
+        self.grid.setSpacing(5)
         self.pushButton1 = PushButton('开始/重新开始', self, FIF.UPDATE)
         self.pushButton1.clicked.connect(self.init_boxw)
         self.vBoxLayout.addLayout(self.grid, Qt.AlignCenter)
