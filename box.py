@@ -10,7 +10,6 @@ class Box:
 
     def __init__(self) -> None:
         # 实例初始化
-        self.len_of_box = 4
         self.create_new_box(self.len_of_box)
         self.random_generate()
         self.print_box()
