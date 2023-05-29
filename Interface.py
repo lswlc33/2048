@@ -126,15 +126,34 @@ class Home_Widget(Widget):
             self.add_box_widget(self.game.box)
             return True
 
+    def check_is_win(self):
+        box = self.game.box
+        is_win = False
+        for i in box:
+            if 1024 in i:
+                is_win = True
+        if is_win:
+            self.is_stop = True
+            Window.showMessageBox(
+                self,
+                "杂鱼，居然赢了吗",
+                "这游戏本来很简单！杂鱼！",
+                '固若金汤！',
+                '啊对对对。'
+            )
+
+            self.is_stop = False
+            return True
+
     def move_a(self):
         if self.is_stop:
             return False
         if self.check_if_full():
             return False
-
         for i in range(self.game.len_of_box):
             self.game.move_a()
         self.game.random_generate()
+        self.check_is_win()
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
@@ -147,9 +166,11 @@ class Home_Widget(Widget):
         for i in range(self.game.len_of_box):
             self.game.move_s()
         self.game.random_generate()
+        self.check_is_win()
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
+
 
     def move_d(self):
         if self.is_stop:
@@ -159,6 +180,7 @@ class Home_Widget(Widget):
         for i in range(self.game.len_of_box):
             self.game.move_d()
         self.game.random_generate()
+        self.check_is_win()
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
@@ -171,6 +193,7 @@ class Home_Widget(Widget):
         for i in range(self.game.len_of_box):
             self.game.move_w()
         self.game.random_generate()
+        self.check_is_win()
         self.game.print_box()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
@@ -257,7 +280,6 @@ class Window(FramelessWindow):
         self.spinBox.setValue(self.homeInterface.game.len_of_box)
         self.spinBox.valueChanged.connect(self.change_box_len)
 
-
         self.hb.addWidget(self.spin_text, 1)
         self.hb.addWidget(self.spinBox, 0)
 
@@ -317,11 +339,12 @@ class Window(FramelessWindow):
         )
 
     def setQss(self):
-        # (不)自适应主题
-        # color = 'dark' if isDarkTheme() else 'light'
-        color = 'light'
-        with open(f'resource/{color}/demo.qss', encoding='utf-8') as f:
-            self.setStyleSheet(f.read())
+        # 主题
+        self.setStyleSheet(
+            "Widget > QLabel {font: 24px 'Segoe UI', 'Microsoft YaHei';}Widget {border: 1px solid rgb(229, 229, "
+            "229);border-right: none;border-bottom: none;border-top-left-radius: 10px;background-color: rgb(249, 249, "
+            "249);}Window {background-color: rgb(243, 243, 243);}"
+        )
 
     def switchTo(self, widget):
         # 翻页
