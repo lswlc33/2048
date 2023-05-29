@@ -274,7 +274,7 @@ class Window(FramelessWindow):
     def switchTo(self, widget):
         # 翻页
         self.stackWidget.setCurrentWidget(widget)
-
+ 
     def onCurrentInterfaceChanged(self, index):
         widget = self.stackWidget.widget(index)
         self.navigationInterface.setCurrentItem(widget.objectName())
