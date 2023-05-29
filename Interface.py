@@ -3,13 +3,12 @@ import sys
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QFont, QKeySequence
-from PyQt5.QtWidgets import QApplication, QFrame, QStackedWidget, QHBoxLayout, QLabel, QGridLayout, QPushButton, \
-    QVBoxLayout, QShortcut
-from qfluentwidgets import FluentIcon as FIF, PushButton
+from PyQt5.QtWidgets import *
+from qfluentwidgets import FluentIcon as FIF, PushButton, SpinBox, ComboBox, ExpandSettingCard
 from qfluentwidgets import (NavigationInterface, NavigationItemPosition, MessageBox)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 from box import *
-from setting_interface import SettingInterface
+
 
 # python ./tools/designer.py
 
@@ -76,9 +75,6 @@ class Setting_Widget(Widget):
         # self.hBoxLayout.addWidget(self.settingInterface)
 
 
-
-
-
 class Home_Widget(Widget):
     def __init__(self, text: str, parent=None):
         super().__init__(text)
@@ -120,8 +116,10 @@ class Home_Widget(Widget):
             delete_all_widgets(self.grid)
             Window.showMessageBox(
                 self,
-                "失败",
-                "你失败了！",
+                "杂鱼,就这？",
+                "你就这点实力吗？杂鱼~",
+                '确实不行',
+                '怎么可能'
             )
 
             self.is_stop = False
@@ -179,7 +177,9 @@ class Home_Widget(Widget):
 
     def init_boxw(self):
         # 初始化宫格
-        self.game = Box()
+
+        self.game.create_new_box(self.game.len_of_box)
+        self.game.random_generate()
         delete_all_widgets(self.grid)
         self.add_box_widget(self.game.box)
 
@@ -197,6 +197,9 @@ class Window(FramelessWindow):
     def __init__(self):
         super().__init__()
         self.setTitleBar(StandardTitleBar(self))
+        self.titleBar.setDoubleClickEnabled(False)
+        self.titleBar.maxBtn.deleteLater()  # 删除最大化按钮
+        self.setResizeEnabled(False)  # 禁止手动拉伸
 
         self.hBoxLayout = QHBoxLayout(self)
         self.navigationInterface = NavigationInterface(self, showMenuButton=True)
@@ -207,6 +210,25 @@ class Window(FramelessWindow):
         self.helpInterface = Widget('Help Interface', self)
         self.settingInterface = Setting_Widget('Setting Interface', self)
 
+        # 帮助--box
+        self.vBoxLayout = QVBoxLayout(self.helpInterface)
+        self.help_card = ExpandSettingCard(
+            FIF.INFO,
+            "点击查看游戏指南"
+        )
+        self.help_text = QLabel(
+            "2048 是一款数字益智游戏，游戏规则如下：\n\n游戏开始时，棋盘上有两个数字方块，数字为 2  "
+            "。\n\n玩家可以通过ASDW四个方向的滑动来移动数字方块，相同数字的方块在移动时会合并成一个数字方块，数字为原来两个数字方块的数字之和。\n\n每次移动后，系统会在空白的方格上随机生成一个数字方块，数字为 "
+            "2 或 4。\n\n当棋盘上的数字方块无法再移动时，游戏结束。\n\n玩家的目标是在棋盘上不断合并数字方块，直到得到一个数字为 2048 的方块。\n\n玩家可以选择继续游戏，或者重新开始游戏。"
+        )
+
+        self.help_text.setWordWrap(True)
+        self.help_card.viewLayout.addWidget(self.help_text)
+        self.help_card.view.setMinimumHeight(350)
+        self.vBoxLayout.addWidget(self.help_card)
+
+        self.init_setting_page()
+
         # initialize layout
         self.initLayout()
 
@@ -214,6 +236,36 @@ class Window(FramelessWindow):
         self.initNavigation()
 
         self.initWindow()
+
+    def init_setting_page(self):
+        self.vBoxLayout = QVBoxLayout(self.settingInterface)
+
+        self.hb = QHBoxLayout()
+        # self.setStyleSheet(
+        #     "#h_layout1{border: 2px solid gray;border-color: rgb(180,180,180);border-radius: "
+        #     "10px;background-color: rgb(255, 255, 255);}#h_layout1:hover{background-color: rgb(229,229,229);}"
+        # )
+        self.vBoxLayout.addLayout(self.hb)
+
+        # 设置--宫格大小--text
+        self.spin_text = QLabel("调整宫格边长:")
+
+        # 设置--宫格大小--spinbox
+        self.spinBox = SpinBox(self)
+        self.spinBox.setMaximum(7)
+        self.spinBox.setMinimum(4)
+        self.spinBox.setValue(self.homeInterface.game.len_of_box)
+        self.spinBox.valueChanged.connect(self.change_box_len)
+
+
+        self.hb.addWidget(self.spin_text, 1)
+        self.hb.addWidget(self.spinBox, 0)
+
+    def change_box_len(self):
+        len_value = self.spinBox.value()
+        self.homeInterface.game.len_of_box = len_value
+        self.homeInterface.init_boxw()
+        print("边长变更为" + str(len_value))
 
     def initLayout(self):
         # 初始化最外层布局
@@ -274,18 +326,21 @@ class Window(FramelessWindow):
     def switchTo(self, widget):
         # 翻页
         self.stackWidget.setCurrentWidget(widget)
+        self.adjustSize()
 
     def onCurrentInterfaceChanged(self, index):
         widget = self.stackWidget.widget(index)
         self.navigationInterface.setCurrentItem(widget.objectName())
 
-    def showMessageBox(self, text1, text2):
+    def showMessageBox(self, text1, text2, bt1, bt2):
         # 弹出消息
         w = MessageBox(
             text1,
             text2,
             self
         )
+        w.yesButton.setText(bt1)
+        w.cancelButton.setText(bt2)
         w.exec()
 
 
