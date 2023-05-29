@@ -8,6 +8,7 @@ from qfluentwidgets import FluentIcon as FIF, PushButton, SpinBox, ComboBox, Exp
 from qfluentwidgets import (NavigationInterface, NavigationItemPosition, MessageBox)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 from box import *
+import res
 
 
 # python ./tools/designer.py
@@ -224,6 +225,8 @@ class Window(FramelessWindow):
         self.titleBar.maxBtn.deleteLater()  # 删除最大化按钮
         self.setResizeEnabled(False)  # 禁止手动拉伸
 
+        # self.setWindowFlag(Qt.Tool)
+
         self.hBoxLayout = QHBoxLayout(self)
         self.navigationInterface = NavigationInterface(self, showMenuButton=True)
         self.stackWidget = QStackedWidget(self)
@@ -315,7 +318,7 @@ class Window(FramelessWindow):
         # 初始化窗口
         self.adjustSize()  # 自适应大小
         # self.resize(900, 700)  # 大小
-        self.setWindowIcon(QIcon('resource/logo.png'))  # 图标
+        self.setWindowIcon(QIcon(':/pic/resource/logo.png'))  # 图标
         self.setWindowTitle('A game：2048')  # 标题
         self.titleBar.setAttribute(Qt.WA_StyledBackground)
 
